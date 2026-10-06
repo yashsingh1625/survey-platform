@@ -1,0 +1,207 @@
+/* Rido Research Custom Stylesheet */
+:root {
+  --rido-yellow: #FFC700;
+  --rido-yellow-hover: #E5B200;
+  --rido-yellow-light: #FFF8DB;
+  --rido-yellow-glow: rgba(255, 199, 0, 0.25);
+  
+  --rido-dark-900: #0B0C10;
+  --rido-dark-800: #12131A;
+  --rido-dark-700: #1A1C26;
+  --rido-dark-600: #262938;
+  
+  --rido-border-dark: #232634;
+  --rido-border-light: #E5E7EB;
+  
+  --rido-text-main: #0F172A;
+  --rido-text-muted: #64748B;
+  --rido-text-dark-muted: #94A3B8;
+}
+
+/* Base custom resets */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--rido-text-main);
+}
+
+/* Typography styles */
+.font-display {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1117;
+}
+::-webkit-scrollbar-thumb {
+  background: #2d3246;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rido-yellow);
+}
+
+/* Button & Badge Utilities */
+.btn-yellow {
+  background-color: var(--rido-yellow);
+  color: #000000;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(255, 199, 0, 0.28);
+}
+.btn-yellow:hover {
+  background-color: var(--rido-yellow-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 199, 0, 0.38);
+}
+.btn-yellow:active {
+  transform: translateY(0);
+}
+
+.btn-dark {
+  background-color: #1A1C26;
+  color: #FFFFFF;
+  border: 1px solid #2D3246;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.btn-dark:hover {
+  background-color: #232736;
+  border-color: #4B5563;
+  color: #FFFFFF;
+}
+
+/* Subtle glow badge */
+.badge-research {
+  background: rgba(255, 199, 0, 0.12);
+  border: 1px solid rgba(255, 199, 0, 0.35);
+  color: #FFC700;
+}
+
+/* Survey question card animation */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-step-in {
+  animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Touch-friendly option cards */
+.survey-option-card {
+  transition: all 0.18s ease;
+  cursor: pointer;
+  user-select: none;
+  border: 1.5px solid #282C3D;
+  background-color: #141620;
+}
+.survey-option-card:hover {
+  border-color: #4E5572;
+  background-color: #1A1D2B;
+}
+.survey-option-card.selected {
+  border-color: var(--rido-yellow);
+  background-color: rgba(255, 199, 0, 0.08);
+  box-shadow: 0 0 0 1px var(--rido-yellow), 0 4px 16px rgba(255, 199, 0, 0.12);
+}
+.survey-option-card.selected .option-key {
+  background-color: var(--rido-yellow);
+  color: #000000;
+  border-color: var(--rido-yellow);
+}
+.survey-option-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Concept Example badge pulse */
+.pulse-indicator {
+  position: relative;
+}
+.pulse-indicator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background-color: #10B981;
+  animation: pulse-ring 2s infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+}
+
+/* Modal overlay transitions */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  background-color: rgba(11, 12, 16, 0.85);
+}
+
+/* Glass panel */
+.glass-panel {
+  background: rgba(26, 28, 38, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   Browser Autofill Dark Theme Overrides & Animation Trigger
+   ========================================================================== */
+@keyframes onAutoFillStart {
+  from { opacity: 0.99; }
+  to { opacity: 1; }
+}
+
+@keyframes onAutoFillCancel {
+  from { opacity: 0.99; }
+  to { opacity: 1; }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #090c15 inset !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  caret-color: #f8fafc !important;
+  transition: background-color 50000s ease-in-out 0s;
+  border-color: rgba(71, 85, 105, 0.8) !important;
+  animation-name: onAutoFillStart;
+}
+
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill:focus {
+  border-color: #FFC700 !important;
+  box-shadow: 0 0 0 1000px #090c15 inset, 0 0 0 1px rgba(255, 199, 0, 0.3) !important;
+}
+

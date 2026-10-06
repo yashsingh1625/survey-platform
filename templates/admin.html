@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rido Research — Admin Dashboard</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            rido: { yellow: '#FFC700', yellowHover: '#E5B200', dark: '#0B0C10', card: '#12131A' }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/static/css/style.css" />
+
+  <style>
+    .stat-card { transition: transform 0.15s ease, border-color 0.15s ease; }
+    .stat-card:hover { transform: translateY(-2px); border-color: rgb(71 85 105); }
+    .table-row { transition: background 0.1s; }
+    .table-row:hover { background: rgba(30,41,59,0.6); }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+    .badge-yes { background: rgba(16,185,129,0.15); color: #34d399; }
+    .badge-maybe { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .badge-no { background: rgba(100,116,139,0.15); color: #94a3b8; }
+    .modal-backdrop { backdrop-filter: blur(8px); }
+    .loading-spin { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .skeleton { background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .fade-in { animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  </style>
+</head>
+<body class="bg-[#0B0C10] text-slate-100 min-h-screen">
+
+  <!-- =================== LOGIN SCREEN =================== -->
+  <div id="login-screen" class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-sm">
+      <!-- Logo -->
+      <div class="flex items-center gap-3 mb-8 justify-center">
+        <div class="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center text-black font-black text-xl font-display">R</div>
+        <div>
+          <div class="text-xl font-black text-white font-display">Rido Research</div>
+          <div class="text-xs text-slate-400">Admin Portal</div>
+        </div>
+      </div>
+
+      <!-- Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl">
+        <div class="w-12 h-12 rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 flex items-center justify-center mb-5 mx-auto">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <h1 class="text-xl font-bold text-white mb-1 text-center font-display">Research Team Login</h1>
+        <p class="text-xs text-slate-400 mb-6 text-center">Survey responses contain private data. Authenticate to continue.</p>
+
+        <form id="login-form" action="javascript:void(0);" class="space-y-4" autocomplete="off">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="login-password">Admin Password</label>
+            <input type="password" id="login-password" name="admin_password"
+              placeholder="Enter admin password…" autocomplete="current-password" required
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm
+                     focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400/30 transition" />
+          </div>
+
+          <div id="login-error" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl px-3 py-2.5 flex items-center gap-2">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/></svg>
+            <span id="login-error-text">Incorrect password. Please try again.</span>
+          </div>
+
+          <button type="submit" id="login-btn" class="btn-yellow w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-400/10">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+            Unlock Dashboard
+          </button>
+
+          <p class="text-[11px] text-slate-600 text-center">Restricted to the Rido research team only.</p>
+        </form>
+      </div>
+
+      <div class="mt-6 text-center">
+        <a href="/" class="text-xs text-slate-500 hover:text-slate-300 transition">← Back to public site</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== DASHBOARD =================== -->
+  <div id="dashboard" class="hidden min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md px-4 sm:px-6 py-4 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center text-black font-black font-display flex-shrink-0">R</div>
+          <div class="min-w-0">
+            <div class="text-sm font-bold text-white font-display truncate">Rido Research Hub</div>
+            <div class="text-[11px] text-slate-400 truncate hidden sm:block">Internal Analytics &amp; Data Dashboard</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <button id="btn-refresh" title="Refresh data"
+            class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+          <a href="/" class="text-xs text-slate-400 hover:text-white transition hidden sm:block">Public Site</a>
+          <button id="logout-btn"
+            class="flex items-center gap-1.5 text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 px-3 py-1.5 rounded-lg transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 fade-in">
+
+      <!-- Page Title Row -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white font-display">Study Insights &amp; Responses</h2>
+          <p id="last-updated" class="text-xs text-slate-400 mt-1">Loading data…</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btn-export-surveys"
+            class="btn-yellow px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Export Surveys
+          </button>
+          <button id="btn-export-pilots"
+            class="btn-dark px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Export Pilots
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat-card bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-xs font-medium text-slate-400 mb-1">Total Surveys</div>
+          <div id="stat-total" class="text-3xl font-extrabold text-amber-400 font-mono skeleton h-9 w-16">—</div>
+          <div class="text-[11px] text-slate-500 mt-2">Completed submissions</div>
+        </div>
+        <div class="stat-card bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-xs font-medium text-slate-400 mb-1">Pilot Leads</div>
+          <div id="stat-leads" class="text-3xl font-extrabold text-emerald-400 font-mono">—</div>
+          <div class="text-[11px] text-slate-500 mt-2">Early access volunteers</div>
+        </div>
+        <div class="stat-card bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-xs font-medium text-slate-400 mb-1">Top Respondent</div>
+          <div id="stat-top-cohort" class="text-base font-bold text-white truncate">—</div>
+          <div class="text-[11px] text-slate-500 mt-2">Highest volume group</div>
+        </div>
+        <div class="stat-card bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-xs font-medium text-slate-400 mb-1">Pilot Intent</div>
+          <div id="stat-pilot-rate" class="text-3xl font-extrabold text-white font-mono">—</div>
+          <div class="text-[11px] text-slate-500 mt-2">Yes + Maybe responses</div>
+        </div>
+      </div>
+
+      <!-- Analytics Breakdowns -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <h3 class="text-sm font-bold text-white mb-4">Respondent Types</h3>
+          <div id="breakdown-profiles" class="space-y-3 text-xs"></div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <h3 class="text-sm font-bold text-white mb-4">Commute Modes</h3>
+          <div id="breakdown-modes" class="space-y-3 text-xs"></div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <h3 class="text-sm font-bold text-white mb-4">Concept Usefulness</h3>
+          <div id="breakdown-concept" class="space-y-3 text-xs"></div>
+        </div>
+      </div>
+
+      <!-- Data Tables -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+
+        <!-- Tab Header + Search -->
+        <div class="border-b border-slate-800 px-4 sm:px-6 py-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <!-- Tabs -->
+            <div class="flex items-center gap-1">
+              <button id="tab-surveys-btn"
+                class="tab-active px-4 py-2 rounded-lg text-sm font-semibold text-amber-400 bg-amber-400/10 transition">
+                Surveys (<span id="count-surveys-tab">0</span>)
+              </button>
+              <button id="tab-pilots-btn"
+                class="tab-inactive px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                Pilot Leads (<span id="count-pilots-tab">0</span>)
+              </button>
+            </div>
+
+            <!-- Search -->
+            <div class="relative w-full sm:w-64">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+              </svg>
+              <input type="text" id="search-input" placeholder="Search surveys…"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-white text-sm
+                       focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400/30 transition" />
+            </div>
+          </div>
+
+          <!-- Active filters row -->
+          <div class="flex flex-wrap items-center justify-between gap-2 mt-3" id="filter-bar">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs text-slate-500">Filter:</span>
+              <select id="filter-type" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-amber-400">
+                <option value="">All Respondent Types</option>
+                <option>College / University student</option>
+                <option>Working professional</option>
+                <option>Resident of a residential community / society</option>
+                <option>Other</option>
+              </select>
+              <select id="filter-pilot" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-amber-400">
+                <option value="">All Pilot Intent</option>
+                <option>Yes</option>
+                <option>Maybe</option>
+                <option>No</option>
+              </select>
+              <select id="filter-status" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-amber-400">
+                <option value="">All Statuses</option>
+                <option value="Submitted">Submitted</option>
+                <option value="Reviewed">Reviewed</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+              <select id="filter-sort" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-amber-400">
+                <option value="desc">Newest First</option>
+                <option value="asc">Oldest First</option>
+              </select>
+              <label class="flex items-center gap-1.5 text-xs text-slate-400 cursor-pointer ml-1">
+                <input type="checkbox" id="filter-deleted" class="rounded bg-slate-800 border-slate-700 text-amber-400 focus:ring-0" />
+                <span>Show Trash / Deleted</span>
+              </label>
+              <button id="filter-clear" class="text-xs text-slate-500 hover:text-amber-400 transition hidden">✕ Clear filters</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Surveys Table -->
+        <div id="surveys-view" class="overflow-x-auto">
+          <div id="surveys-loading" class="p-8 text-center text-slate-400 text-sm">
+            <svg class="loading-spin w-6 h-6 text-amber-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+            Loading survey data…
+          </div>
+          <table id="surveys-table" class="w-full text-left text-xs text-slate-300 hidden">
+            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="p-3 whitespace-nowrap">ID / Date</th>
+                <th class="p-3 whitespace-nowrap">Status</th>
+                <th class="p-3 whitespace-nowrap">Type</th>
+                <th class="p-3 whitespace-nowrap">Mode</th>
+                <th class="p-3 whitespace-nowrap">Spend</th>
+                <th class="p-3 whitespace-nowrap">Satisfaction</th>
+                <th class="p-3 whitespace-nowrap">Concept</th>
+                <th class="p-3 whitespace-nowrap">Pilot</th>
+                <th class="p-3 whitespace-nowrap text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="surveys-tbody" class="divide-y divide-slate-800/60"></tbody>
+          </table>
+          <div id="surveys-empty" class="hidden p-8 text-center">
+            <div class="text-slate-500 text-sm mb-2">No survey responses yet</div>
+            <div class="text-slate-600 text-xs">Responses will appear here once users submit the survey.</div>
+          </div>
+          <div id="surveys-no-results" class="hidden p-8 text-center">
+            <div class="text-slate-500 text-sm">No results match your search or filters.</div>
+          </div>
+          <!-- Pagination bar -->
+          <div id="pagination-bar" class="border-t border-slate-800 px-4 py-3 bg-slate-950/60 flex items-center justify-between text-xs text-slate-400">
+            <div id="pagination-info">Showing 0 of 0</div>
+            <div class="flex items-center gap-2">
+              <button id="btn-page-prev" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed">← Prev</button>
+              <span id="pagination-pages" class="font-mono text-slate-300">Page 1</span>
+              <button id="btn-page-next" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pilots Table -->
+        <div id="pilots-view" class="hidden overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="p-3">Date</th>
+                <th class="p-3">Name</th>
+                <th class="p-3">Contact</th>
+                <th class="p-3">Route</th>
+                <th class="p-3">Schedule</th>
+                <th class="p-3">Type</th>
+                <th class="p-3">Source</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="pilots-tbody" class="divide-y divide-slate-800/60">
+              <tr><td colspan="8" class="p-6 text-center text-slate-500">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =================== SURVEY DETAIL MODAL =================== -->
+  <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4 modal-backdrop bg-black/70">
+    <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl">
+      <div class="sticky top-0 bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between rounded-t-3xl z-10">
+        <div>
+          <h3 id="detail-title" class="text-base font-bold text-white">Survey Response</h3>
+          <p id="detail-subtitle" class="text-xs text-slate-400 mt-0.5"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="detail-edit-btn" class="px-3 py-1.5 bg-amber-400/10 text-amber-400 border border-amber-400/30 rounded-xl text-xs font-bold hover:bg-amber-400/20 transition">Edit</button>
+          <button id="detail-close" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="detail-body" class="p-6 space-y-4 text-sm">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== EDIT RESPONSE MODAL =================== -->
+  <div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4 modal-backdrop bg-black/75">
+    <div class="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl p-6">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+        <h3 id="edit-modal-title" class="text-lg font-bold text-white font-display">Edit Survey Response</h3>
+        <button id="edit-close" class="text-slate-400 hover:text-white transition">✕</button>
+      </div>
+
+      <form id="edit-form" class="space-y-4">
+        <input type="hidden" id="edit-id" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Status</label>
+            <select id="edit-status" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+              <option value="Submitted">Submitted</option>
+              <option value="Reviewed">Reviewed</option>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Respondent Type</label>
+            <input type="text" id="edit-respondent-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Commute Mode</label>
+            <input type="text" id="edit-commute-mode" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Daily Spend</label>
+            <input type="text" id="edit-commute-spend" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Concept Usefulness</label>
+            <input type="text" id="edit-concept-usefulness" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Pilot Interest</label>
+            <select id="edit-pilot-interest" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+              <option value="Yes">Yes</option>
+              <option value="Maybe">Maybe</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Biggest Problem (Open Text)</label>
+          <textarea id="edit-biggest-problem" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:border-amber-400 focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Change One Thing (Open Text)</label>
+          <textarea id="edit-change-one-thing" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:border-amber-400 focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Admin Notes</label>
+          <textarea id="edit-admin-notes" rows="2" placeholder="Internal research team notes…" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:border-amber-400 focus:outline-none"></textarea>
+        </div>
+
+        <div id="edit-error" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl p-3"></div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" id="edit-cancel" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition">Cancel</button>
+          <button type="submit" id="edit-save-btn" class="btn-yellow px-5 py-2 rounded-xl text-xs font-bold shadow">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =================== DELETE CONFIRMATION MODAL =================== -->
+  <div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4 modal-backdrop bg-black/75">
+    <div class="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl p-6 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </div>
+
+      <h3 class="text-lg font-bold text-white font-display mb-2">Delete Survey Response?</h3>
+      <p id="delete-confirm-text" class="text-xs text-slate-400 mb-6">Are you sure you want to delete response #<span id="delete-target-id"></span>? It will be moved to trash.</p>
+
+      <div class="flex items-center justify-center gap-3">
+        <button id="delete-cancel-btn" class="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-xs font-medium hover:bg-slate-800 transition">Cancel</button>
+        <button id="delete-confirm-btn" class="px-5 py-2.5 rounded-xl bg-rose-600 text-white hover:bg-rose-500 text-xs font-bold shadow-lg transition">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== PILOT LEAD DETAIL MODAL =================== -->
+  <div id="pilot-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4 modal-backdrop bg-black/70">
+    <div class="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl">
+      <div class="sticky top-0 bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between rounded-t-3xl z-10">
+        <div>
+          <h3 id="pilot-detail-title" class="text-base font-bold text-white">Pilot Lead Details</h3>
+          <p id="pilot-detail-subtitle" class="text-xs text-slate-400 mt-0.5"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="pilot-detail-edit-btn" class="px-3 py-1.5 bg-amber-400/10 text-amber-400 border border-amber-400/30 rounded-xl text-xs font-bold hover:bg-amber-400/20 transition">Edit</button>
+          <button id="pilot-detail-close" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="pilot-detail-body" class="p-6 space-y-4 text-sm">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== EDIT PILOT LEAD MODAL =================== -->
+  <div id="pilot-edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4 modal-backdrop bg-black/75">
+    <div class="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl p-6">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+        <h3 id="pilot-edit-modal-title" class="text-lg font-bold text-white font-display">Edit Pilot Lead</h3>
+        <button id="pilot-edit-close" class="text-slate-400 hover:text-white transition">✕</button>
+      </div>
+
+      <form id="pilot-edit-form" class="space-y-4">
+        <input type="hidden" id="pilot-edit-id" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-name">Full Name *</label>
+            <input type="text" id="pilot-edit-name" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-email">Email Address *</label>
+            <input type="email" id="pilot-edit-email" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-phone">Phone Number *</label>
+            <input type="tel" id="pilot-edit-phone" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-type">Respondent Type</label>
+            <select id="pilot-edit-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+              <option value="College / University student">College / University student</option>
+              <option value="Working professional">Working professional</option>
+              <option value="Resident of a residential community / society">Resident of a residential community / society</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-area">Current Area / Society *</label>
+            <input type="text" id="pilot-edit-area" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-destination">Destination *</label>
+            <input type="text" id="pilot-edit-destination" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-time">Departure Time *</label>
+            <input type="text" id="pilot-edit-time" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-source">Source</label>
+            <input type="text" id="pilot-edit-source" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Travel Days (Click to toggle)</label>
+          <div class="flex flex-wrap gap-1.5" id="pilot-edit-days-container"></div>
+          <input type="hidden" id="pilot-edit-days" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1" for="pilot-edit-notes">Notes / Internal Comments</label>
+          <textarea id="pilot-edit-notes" rows="2" placeholder="Admin notes..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:border-amber-400 focus:outline-none"></textarea>
+        </div>
+
+        <div id="pilot-edit-error" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl p-3"></div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" id="pilot-edit-cancel" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition">Cancel</button>
+          <button type="submit" id="pilot-edit-save-btn" class="btn-yellow px-5 py-2 rounded-xl text-xs font-bold shadow">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =================== DELETE PILOT LEAD CONFIRMATION MODAL =================== -->
+  <div id="pilot-delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4 modal-backdrop bg-black/75">
+    <div class="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl p-6 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </div>
+
+      <h3 class="text-lg font-bold text-white font-display mb-2">Delete Pilot Lead?</h3>
+      <p id="pilot-delete-confirm-text" class="text-xs text-slate-400 mb-6">Are you sure you want to move this pilot lead to Trash? You can restore it anytime from "Show Trash / Deleted".</p>
+
+      <div class="flex items-center justify-center gap-3">
+        <button id="pilot-delete-cancel-btn" class="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-xs font-medium hover:bg-slate-800 transition">Cancel</button>
+        <button id="pilot-delete-confirm-btn" class="px-5 py-2.5 rounded-xl bg-rose-600 text-white hover:bg-rose-500 text-xs font-bold shadow-lg transition">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== TOAST NOTIFICATION CONTAINER =================== -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    // ─────────────────────────────────────────────────────────────
+    // Token Management — in-memory fallback + sessionStorage/localStorage
+    // ─────────────────────────────────────────────────────────────
+    const TOKEN_KEY = 'rido_admin_token';
+    let memoryToken = '';
+
+    function getToken() {
+      if (memoryToken) return memoryToken;
+      try {
+        memoryToken = sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || '';
+      } catch(e) {}
+      return memoryToken;
+    }
+
+    function setToken(token) {
+      memoryToken = token || '';
+      try {
+        if (token) {
+          sessionStorage.setItem(TOKEN_KEY, token);
+          localStorage.setItem(TOKEN_KEY, token);
+        } else {
+          clearToken();
+        }
+      } catch(e) {}
+    }
+
+    function clearToken() {
+      memoryToken = '';
+      try {
+        sessionStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem('rido_admin_key');
+      } catch(e) {}
+    }
+
+    function authHeaders() {
+      return { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' };
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // UI Elements
+    // ─────────────────────────────────────────────────────────────
+    const loginScreen   = document.getElementById('login-screen');
+    const dashboardEl   = document.getElementById('dashboard');
+    const loginForm     = document.getElementById('login-form');
+    const loginPwInput  = document.getElementById('login-password');
+    const loginBtn      = document.getElementById('login-btn');
+    const loginError    = document.getElementById('login-error');
+    const loginErrText  = document.getElementById('login-error-text');
+    const logoutBtn     = document.getElementById('logout-btn');
+
+    // ─────────────────────────────────────────────────────────────
+    // Show / hide login vs dashboard
+    // ─────────────────────────────────────────────────────────────
+    function showLoginScreen() {
+      loginScreen.style.display = 'flex';
+      dashboardEl.style.display = 'none';
+      loginScreen.classList.remove('hidden');
+      dashboardEl.classList.add('hidden');
+      setTimeout(() => loginPwInput && loginPwInput.focus(), 100);
+    }
+
+    function showDashboard() {
+      loginScreen.style.display = 'none';
+      dashboardEl.style.display = 'flex';
+      loginScreen.classList.add('hidden');
+      dashboardEl.classList.remove('hidden');
+      loadDashboard();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Login form handler
+    // ─────────────────────────────────────────────────────────────
+    async function performLogin() {
+      loginError.classList.add('hidden');
+      loginPwInput.classList.remove('border-rose-500');
+      const password = loginPwInput.value.trim();
+      if (!password) {
+        showLoginError('Please enter your admin password.');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = `<svg class="loading-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Authenticating…`;
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          setToken(data.access_token);
+          loginPwInput.value = '';
+          showDashboard();
+        } else if (res.status === 401) {
+          showLoginError('Incorrect password. Please try again.');
+        } else if (res.status === 429) {
+          showLoginError('Too many attempts. Please wait a minute and try again.');
+        } else {
+          showLoginError('Server error. Please try again.');
+        }
+      } catch (err) {
+        clearTimeout(timeoutId);
+        if (err && err.name === 'AbortError') {
+          showLoginError('Request timed out after 15 seconds. Please try again.');
+        } else {
+          showLoginError('Network error. Please check your connection.');
+        }
+      } finally {
+        clearTimeout(timeoutId);
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg> Unlock Dashboard`;
+      }
+    }
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      performLogin();
+    });
+
+    function showLoginError(msg) {
+      loginErrText.textContent = msg;
+      loginError.classList.remove('hidden');
+      loginPwInput.classList.add('border-rose-500');
+      loginPwInput.focus();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Logout
+    // ─────────────────────────────────────────────────────────────
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await fetch('/api/admin/logout', { method: 'POST', headers: authHeaders() });
+      } catch { /* ignore */ }
+      clearToken();
+      showLoginScreen();
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Dashboard Data State
+    // ─────────────────────────────────────────────────────────────
+    let allSurveys = [];
+    let allPilots  = [];
+
+    async function loadDashboard() {
+      try {
+        // Stats
+        const statsRes = await fetch('/api/admin/stats', { headers: authHeaders() });
+        if (statsRes.status === 401) { clearToken(); showLoginScreen(); return; }
+        const stats = await statsRes.json();
+        renderStats(stats);
+
+        // Surveys
+        const survRes = await fetch('/api/admin/surveys', { headers: authHeaders() });
+        if (survRes.status === 401) { clearToken(); showLoginScreen(); return; }
+        allSurveys = await survRes.json();
+        applyFilters();
+        document.getElementById('count-surveys-tab').textContent = allSurveys.length;
+
+        // Pilots
+        const pilotRes = await fetch('/api/admin/pilots', { headers: authHeaders() });
+        if (pilotRes.status === 401) { clearToken(); showLoginScreen(); return; }
+        allPilots = await pilotRes.json();
+        renderPilotsTable(allPilots);
+        document.getElementById('count-pilots-tab').textContent = allPilots.length;
+
+        document.getElementById('last-updated').textContent =
+          `Last updated: ${new Date().toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' })}`;
+
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+        if (getToken()) {
+          document.getElementById('last-updated').textContent = 'Error loading data. Try refreshing.';
+        }
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Stats rendering
+    // ─────────────────────────────────────────────────────────────
+    function renderStats(stats) {
+      document.getElementById('stat-total').textContent = stats.total_surveys ?? 0;
+      document.getElementById('stat-leads').textContent = stats.total_pilot_leads ?? 0;
+
+      const profiles = stats.profile_breakdown || {};
+      let topProfile = '—', maxCount = -1;
+      for (const [k, v] of Object.entries(profiles)) {
+        if (v > maxCount) { maxCount = v; topProfile = k; }
+      }
+      document.getElementById('stat-top-cohort').textContent = topProfile;
+
+      const pInt = stats.pilot_interest || {};
+      const yesCount = (pInt['Yes'] || 0) + (pInt['Maybe'] || 0);
+      const rate = stats.total_surveys > 0 ? Math.round((yesCount / stats.total_surveys) * 100) : 0;
+      document.getElementById('stat-pilot-rate').textContent = `${rate}%`;
+
+      renderBreakdown('breakdown-profiles', stats.profile_breakdown, stats.total_surveys);
+      renderBreakdown('breakdown-modes', stats.mode_breakdown, stats.total_surveys);
+      renderBreakdown('breakdown-concept', stats.concept_feedback, stats.total_surveys);
+    }
+
+    function renderBreakdown(containerId, dataObj, total) {
+      const el = document.getElementById(containerId);
+      if (!el || !dataObj) return;
+      const entries = Object.entries(dataObj).sort((a, b) => b[1] - a[1]);
+      if (!entries.length) { el.innerHTML = '<div class="text-slate-500 text-xs">No data yet</div>'; return; }
+      el.innerHTML = entries.map(([key, count]) => {
+        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+        const safeKey = escHtml(key);
+        return `<div>
+          <div class="flex justify-between text-slate-300 mb-1">
+            <span class="truncate max-w-[180px]" title="${safeKey}">${safeKey}</span>
+            <span class="font-mono text-slate-400 ml-2">${count} (${pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-800 rounded-full h-1.5">
+            <div class="bg-amber-400 h-1.5 rounded-full transition-all" style="width:${pct}%"></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Toast Notification System
+    // ─────────────────────────────────────────────────────────────
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      const isErr = type === 'error';
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border text-xs font-semibold shadow-2xl flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${
+        isErr ? 'bg-rose-950 border-rose-500/40 text-rose-200' : 'bg-slate-900 border-amber-400/40 text-slate-100'
+      }`;
+      toast.innerHTML = `
+        <svg class="w-4 h-4 flex-shrink-0 ${isErr ? 'text-rose-400' : 'text-amber-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isErr ? 'M6 18L18 6M6 6l12 12' : 'M5 13l4 4L19 7'}"/>
+        </svg>
+        <span>${escHtml(message)}</span>
+      `;
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Filtering & Table Rendering
+    // ─────────────────────────────────────────────────────────────
+    function applyFilters() {
+      const searchInput   = document.getElementById('search-input');
+      const filterType    = document.getElementById('filter-type');
+      const filterPilot   = document.getElementById('filter-pilot');
+      const filterStatus  = document.getElementById('filter-status');
+      const filterDeleted = document.getElementById('filter-deleted');
+      const filterClear   = document.getElementById('filter-clear');
+
+      const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const typeVal = filterType ? filterType.value : '';
+      const pilotVal = filterPilot ? filterPilot.value : '';
+      const statusVal = filterStatus ? filterStatus.value : '';
+      const showDeleted = filterDeleted ? filterDeleted.checked : false;
+
+      const hasActiveFilters = q || typeVal || pilotVal || statusVal || showDeleted;
+      if (filterClear) {
+        if (hasActiveFilters) filterClear.classList.remove('hidden');
+        else filterClear.classList.add('hidden');
+      }
+
+      let filtered = (allSurveys || []).filter(s => {
+        if (!showDeleted && s.is_deleted === 1) return false;
+        if (typeVal && s.respondent_type !== typeVal) return false;
+        if (pilotVal && s.pilot_interest !== pilotVal) return false;
+        if (statusVal && (s.status || 'Submitted') !== statusVal) return false;
+        if (q) {
+          const match = [
+            s.respondent_type, s.commute_mode, s.pilot_interest, s.status,
+            s.biggest_problem_open, s.change_one_thing, String(s.id)
+          ].some(v => v && String(v).toLowerCase().includes(q));
+          if (!match) return false;
+        }
+        return true;
+      });
+
+      renderSurveysTable(filtered);
+    }
+
+    function renderSurveysTable(list) {
+      const loadingEl = document.getElementById('surveys-loading');
+      const tableEl = document.getElementById('surveys-table');
+      const emptyEl = document.getElementById('surveys-empty');
+      const noResultsEl = document.getElementById('surveys-no-results');
+      const paginationInfoEl = document.getElementById('pagination-info');
+      const tbody = document.getElementById('surveys-tbody');
+
+      if (loadingEl) loadingEl.classList.add('hidden');
+
+      const filterDeleted = document.getElementById('filter-deleted');
+      const showDeleted = filterDeleted ? filterDeleted.checked : false;
+      const activeSurveys = (allSurveys || []).filter(s => showDeleted || s.is_deleted !== 1);
+
+      if (!activeSurveys.length) {
+        if (tableEl) tableEl.classList.add('hidden');
+        if (emptyEl) emptyEl.classList.remove('hidden');
+        if (noResultsEl) noResultsEl.classList.add('hidden');
+        if (paginationInfoEl) paginationInfoEl.textContent = 'Showing 0 of 0';
+        return;
+      }
+
+      if (!list || !list.length) {
+        if (tableEl) tableEl.classList.add('hidden');
+        if (emptyEl) emptyEl.classList.add('hidden');
+        if (noResultsEl) noResultsEl.classList.remove('hidden');
+        if (paginationInfoEl) paginationInfoEl.textContent = `Showing 0 of ${activeSurveys.length}`;
+        return;
+      }
+
+      if (tableEl) tableEl.classList.remove('hidden');
+      if (emptyEl) emptyEl.classList.add('hidden');
+      if (noResultsEl) noResultsEl.classList.add('hidden');
+      if (paginationInfoEl) paginationInfoEl.textContent = `Showing 1–${list.length} of ${activeSurveys.length}`;
+
+      if (!tbody) return;
+
+      tbody.innerHTML = list.map(s => {
+        const isDeleted = s.is_deleted === 1;
+        const badgeClass = s.pilot_interest === 'Yes' ? 'badge-yes' : (s.pilot_interest === 'Maybe' ? 'badge-maybe' : 'badge-no');
+        return `
+          <tr class="table-row cursor-pointer ${isDeleted ? 'opacity-50 bg-rose-950/20' : ''}" onclick="openDetailModal(${s.id})">
+            <td class="p-3 font-mono text-slate-400 whitespace-nowrap">
+              #${s.id}
+              <span class="text-[10px] text-slate-500 block">${(s.timestamp || '').slice(0, 10)}</span>
+              ${isDeleted ? '<span class="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded mt-0.5 inline-block">DELETED</span>' : ''}
+            </td>
+            <td class="p-3 text-slate-300 text-xs whitespace-nowrap">
+              <span class="px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                ${escHtml(s.status || 'Submitted')}
+              </span>
+            </td>
+            <td class="p-3 font-medium text-slate-200 text-xs">${escHtml(s.respondent_type || '—')}</td>
+            <td class="p-3 text-slate-300 text-xs">${escHtml(s.commute_mode || '—')}</td>
+            <td class="p-3 text-slate-300 text-xs">${escHtml(s.commute_spend || '—')}</td>
+            <td class="p-3 text-slate-300 text-xs">${escHtml(s.commute_satisfaction || '—')}</td>
+            <td class="p-3 text-slate-300 text-xs">${escHtml(s.concept_usefulness || '—')}</td>
+            <td class="p-3"><span class="badge ${badgeClass}">${escHtml(s.pilot_interest || '—')}</span></td>
+            <td class="p-3 text-right">
+              <div class="flex items-center justify-end gap-2" onclick="event.stopPropagation()">
+                <button class="text-xs text-slate-400 hover:text-amber-400 transition font-medium" onclick="openDetailModal(${s.id})">View</button>
+                ${isDeleted ? `
+                  <button class="text-xs text-emerald-400 hover:text-emerald-300 transition font-bold" onclick="restoreSurvey(${s.id})">Restore</button>
+                ` : `
+                  <button class="text-xs text-amber-400 hover:text-amber-300 transition font-semibold" onclick="openEditModal(${s.id})">Edit</button>
+                  <button class="text-xs text-rose-400 hover:text-rose-300 transition font-semibold" onclick="openDeleteModal(${s.id})">Delete</button>
+                `}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterAndRenderPilots() {
+      const searchInput = document.getElementById('search-input');
+      const filterDeleted = document.getElementById('filter-deleted');
+      const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const showDeleted = filterDeleted ? filterDeleted.checked : false;
+
+      let list = (allPilots || []).filter(p => {
+        if (!showDeleted && p.is_deleted === 1) return false;
+        if (q) {
+          const match = [
+            p.name, p.email, p.phone, p.current_area, p.destination,
+            p.usual_commute_time, p.respondent_type, p.source, String(p.id)
+          ].some(v => v && String(v).toLowerCase().includes(q));
+          if (!match) return false;
+        }
+        return true;
+      });
+
+      renderPilotsTable(list);
+    }
+
+    function renderPilotsTable(list) {
+      const tbody = document.getElementById('pilots-tbody');
+      if (!list || !list.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-500">No pilot leads collected yet.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(item => {
+        let formattedDays = item.travel_days || '—';
+        try {
+            const parsed = JSON.parse(item.travel_days);
+            if (Array.isArray(parsed)) formattedDays = parsed.join(', ');
+        } catch(e) {}
+        const isDeleted = item.is_deleted === 1;
+        return `
+        <tr class="table-row cursor-pointer ${isDeleted ? 'opacity-50 bg-rose-950/20' : ''}" onclick="openPilotDetailModal(${item.id})">
+          <td class="p-3 font-mono text-slate-400 whitespace-nowrap">
+            ${(item.timestamp || '').slice(0, 10)}
+            ${isDeleted ? '<span class="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded ml-1">DELETED</span>' : ''}
+          </td>
+          <td class="p-3 font-bold text-white">${escHtml(item.name)}</td>
+          <td class="p-3">
+            <div class="font-mono text-slate-300">${escHtml(item.email)}</div>
+            <div class="text-amber-400 font-mono">${escHtml(item.phone)}</div>
+          </td>
+          <td class="p-3">${escHtml(item.current_area || '—')} → <span class="text-emerald-300">${escHtml(item.destination || '—')}</span></td>
+          <td class="p-3">${escHtml(item.usual_commute_time || '—')}<br><span class="text-slate-500">${escHtml(formattedDays)}</span></td>
+          <td class="p-3 text-slate-400 text-[11px]">${escHtml(item.respondent_type || '—')}</td>
+          <td class="p-3 font-mono text-[10px] text-slate-500">${escHtml(item.source || '—')}</td>
+          <td class="p-3 text-right">
+            <div class="flex items-center justify-end gap-2" onclick="event.stopPropagation()">
+              <button class="text-xs text-slate-400 hover:text-amber-400 transition font-medium" onclick="openPilotDetailModal(${item.id})">View</button>
+              ${isDeleted ? `
+                <button class="text-xs text-emerald-400 hover:text-emerald-300 transition font-bold" onclick="restorePilot(${item.id})">Restore</button>
+              ` : `
+                <button class="text-xs text-amber-400 hover:text-amber-300 transition font-semibold" onclick="openPilotEditModal(${item.id})">Edit</button>
+                <button class="text-xs text-rose-400 hover:text-rose-300 transition font-semibold" onclick="openPilotDeleteModal(${item.id})">Delete</button>
+              `}
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Pilot Lead Detail Modal
+    // ─────────────────────────────────────────────────────────────
+    const pilotDetailModal   = document.getElementById('pilot-detail-modal');
+    const pilotDetailClose   = document.getElementById('pilot-detail-close');
+    const pilotDetailEditBtn = document.getElementById('pilot-detail-edit-btn');
+    const pilotDetailBody    = document.getElementById('pilot-detail-body');
+    let currentPilotDetailId = null;
+
+    if (pilotDetailClose) pilotDetailClose.addEventListener('click', closePilotDetailModal);
+    if (pilotDetailModal) pilotDetailModal.addEventListener('click', e => { if (e.target === pilotDetailModal) closePilotDetailModal(); });
+    if (pilotDetailEditBtn) pilotDetailEditBtn.addEventListener('click', () => { if (currentPilotDetailId) openPilotEditModal(currentPilotDetailId); });
+
+    function closePilotDetailModal() {
+      if (pilotDetailModal) {
+        pilotDetailModal.classList.add('hidden');
+        pilotDetailModal.classList.remove('flex');
+      }
+      currentPilotDetailId = null;
+    }
+
+    async function openPilotDetailModal(id) {
+      currentPilotDetailId = id;
+      if (!pilotDetailModal) return;
+      pilotDetailModal.classList.remove('hidden');
+      pilotDetailModal.classList.add('flex');
+      document.getElementById('pilot-detail-title').textContent = `Pilot Lead Details`;
+      document.getElementById('pilot-detail-subtitle').textContent = 'Loading…';
+      pilotDetailBody.innerHTML = `<div class="text-center py-6 text-slate-400"><svg class="loading-spin w-6 h-6 mx-auto mb-2 text-amber-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading pilot details…</div>`;
+
+      try {
+        const res = await fetch(`/api/admin/pilots/${id}`, { headers: authHeaders() });
+        if (!res.ok) throw new Error('Failed');
+        const p = await res.json();
+        renderPilotDetailModal(p);
+      } catch {
+        pilotDetailBody.innerHTML = `<div class="text-rose-400 text-sm">Failed to load pilot lead details.</div>`;
+      }
+    }
+
+    function renderPilotDetailModal(p) {
+      document.getElementById('pilot-detail-title').textContent = `Pilot Lead — ${escHtml(p.name)}`;
+      document.getElementById('pilot-detail-subtitle').textContent = `Created ${(p.timestamp || '').replace('T', ' ').slice(0, 16)} UTC · ID #${p.id}`;
+
+      let formattedDays = p.travel_days || '—';
+      try {
+        const parsed = JSON.parse(p.travel_days);
+        if (Array.isArray(parsed)) formattedDays = parsed.join(', ');
+      } catch {}
+
+      function section(title, rows) {
+        const content = rows.filter(([,v]) => v !== undefined && v !== null && v !== '').map(([label, val]) =>
+          `<div class="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 py-2 border-b border-slate-800 last:border-0">
+            <span class="text-slate-400 text-xs font-medium min-w-[160px] flex-shrink-0">${escHtml(label)}</span>
+            <span class="text-slate-100 text-xs leading-relaxed whitespace-pre-wrap">${escHtml(String(val))}</span>
+          </div>`).join('');
+        if (!content) return '';
+        return `<div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">${title}</h4>
+          ${content}
+        </div>`;
+      }
+
+      pilotDetailBody.innerHTML = [
+        section('Contact & Identity', [
+          ['Lead ID', `#${p.id}`],
+          ['Full Name', p.name],
+          ['Email Address', p.email],
+          ['Phone Number', p.phone],
+          ['Respondent Type', p.respondent_type || 'Unspecified'],
+        ]),
+        section('Commute Route & Schedule', [
+          ['Current Area / Society', p.current_area],
+          ['Destination', p.destination],
+          ['Usual Departure Time', p.usual_commute_time],
+          ['Travel Days', formattedDays],
+        ]),
+        section('Research & Metadata', [
+          ['Source', p.source],
+          ['Research Consent', p.consent_agreed ? 'Yes (Agreed)' : 'No'],
+          ['Notes', p.notes || 'None'],
+          ['Submitted At', p.timestamp],
+        ]),
+      ].join('');
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Pilot Lead Edit Modal
+    // ─────────────────────────────────────────────────────────────
+    const pilotEditModal  = document.getElementById('pilot-edit-modal');
+    const pilotEditForm   = document.getElementById('pilot-edit-form');
+    const pilotEditClose  = document.getElementById('pilot-edit-close');
+    const pilotEditCancel = document.getElementById('pilot-edit-cancel');
+    const pilotEditError  = document.getElementById('pilot-edit-error');
+
+    if (pilotEditClose) pilotEditClose.addEventListener('click', closePilotEditModal);
+    if (pilotEditCancel) pilotEditCancel.addEventListener('click', closePilotEditModal);
+    if (pilotEditModal) pilotEditModal.addEventListener('click', e => { if (e.target === pilotEditModal) closePilotEditModal(); });
+
+    function closePilotEditModal() {
+      if (pilotEditModal) {
+        pilotEditModal.classList.add('hidden');
+        pilotEditModal.classList.remove('flex');
+      }
+    }
+
+    function openPilotEditModal(id) {
+      closePilotDetailModal();
+      const pilot = allPilots.find(p => p.id === id);
+      if (!pilot || !pilotEditModal) return;
+
+      document.getElementById('pilot-edit-modal-title').textContent = `Edit Pilot Lead #${id}`;
+      document.getElementById('pilot-edit-id').value = id;
+      document.getElementById('pilot-edit-name').value = pilot.name || '';
+      document.getElementById('pilot-edit-email').value = pilot.email || '';
+      document.getElementById('pilot-edit-phone').value = pilot.phone || '';
+      document.getElementById('pilot-edit-type').value = pilot.respondent_type || 'College / University student';
+      document.getElementById('pilot-edit-area').value = pilot.current_area || '';
+      document.getElementById('pilot-edit-destination').value = pilot.destination || '';
+      document.getElementById('pilot-edit-time').value = pilot.usual_commute_time || '';
+      document.getElementById('pilot-edit-source').value = pilot.source || '';
+      document.getElementById('pilot-edit-notes').value = pilot.notes || '';
+
+      let days = [];
+      try {
+        if (Array.isArray(pilot.travel_days)) days = pilot.travel_days;
+        else if (typeof pilot.travel_days === 'string') {
+          if (pilot.travel_days.startsWith('[')) days = JSON.parse(pilot.travel_days);
+          else days = pilot.travel_days.split(',').map(s => s.trim());
+        }
+      } catch {}
+      document.getElementById('pilot-edit-days').value = JSON.stringify(days);
+
+      renderPilotEditDayButtons(days);
+
+      pilotEditError.classList.add('hidden');
+      pilotEditModal.classList.remove('hidden');
+      pilotEditModal.classList.add('flex');
+    }
+
+    function renderPilotEditDayButtons(selectedDays) {
+      const container = document.getElementById('pilot-edit-days-container');
+      if (!container) return;
+      const allDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      container.innerHTML = allDays.map(d => {
+        const sel = selectedDays.includes(d);
+        return `<button type="button" data-day="${d}" class="pilot-edit-day-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition ${
+          sel ? 'bg-amber-400 text-slate-950 border-amber-400 font-bold' : 'bg-slate-950 text-slate-300 border-slate-700 hover:border-amber-400/50'
+        }">${d}</button>`;
+      }).join('');
+
+      container.querySelectorAll('.pilot-edit-day-btn').forEach(btn => {
+        btn.onclick = () => {
+          const day = btn.getAttribute('data-day');
+          let current = [];
+          try { current = JSON.parse(document.getElementById('pilot-edit-days').value) || []; } catch {}
+          if (current.includes(day)) {
+            current = current.filter(x => x !== day);
+          } else {
+            current.push(day);
+          }
+          document.getElementById('pilot-edit-days').value = JSON.stringify(current);
+          renderPilotEditDayButtons(current);
+        };
+      });
+    }
+
+    if (pilotEditForm) {
+      pilotEditForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = parseInt(document.getElementById('pilot-edit-id').value, 10);
+        let travel_days = [];
+        try { travel_days = JSON.parse(document.getElementById('pilot-edit-days').value) || []; } catch {}
+
+        const payload = {
+          name: document.getElementById('pilot-edit-name').value.trim(),
+          email: document.getElementById('pilot-edit-email').value.trim(),
+          phone: document.getElementById('pilot-edit-phone').value.trim(),
+          respondent_type: document.getElementById('pilot-edit-type').value,
+          current_area: document.getElementById('pilot-edit-area').value.trim(),
+          destination: document.getElementById('pilot-edit-destination').value.trim(),
+          usual_commute_time: document.getElementById('pilot-edit-time').value.trim(),
+          travel_days: travel_days,
+          source: document.getElementById('pilot-edit-source').value.trim(),
+          notes: document.getElementById('pilot-edit-notes').value.trim()
+        };
+
+        if (!payload.name || !payload.email || !payload.phone) {
+          pilotEditError.textContent = 'Name, email, and phone number are required.';
+          pilotEditError.classList.remove('hidden');
+          return;
+        }
+
+        const saveBtn = document.getElementById('pilot-edit-save-btn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving…';
+
+        try {
+          const res = await fetch(`/api/admin/pilots/${id}`, {
+            method: 'PUT',
+            headers: authHeaders(),
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const idx = allPilots.findIndex(p => p.id === id);
+            if (idx !== -1) allPilots[idx] = data.data;
+            closePilotEditModal();
+            showToast(`Pilot lead #${id} updated successfully.`);
+            filterAndRenderPilots();
+          } else {
+            const errData = await res.json();
+            pilotEditError.textContent = errData.detail || 'Failed to update pilot lead.';
+            pilotEditError.classList.remove('hidden');
+          }
+        } catch {
+          pilotEditError.textContent = 'Network error while saving changes.';
+          pilotEditError.classList.remove('hidden');
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Save Changes';
+        }
+      });
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Pilot Lead Delete Modal
+    // ─────────────────────────────────────────────────────────────
+    const pilotDeleteModal      = document.getElementById('pilot-delete-modal');
+    const pilotDeleteCancelBtn  = document.getElementById('pilot-delete-cancel-btn');
+    const pilotDeleteConfirmBtn = document.getElementById('pilot-delete-confirm-btn');
+    let pilotDeleteTargetId     = null;
+
+    if (pilotDeleteCancelBtn) pilotDeleteCancelBtn.addEventListener('click', closePilotDeleteModal);
+    if (pilotDeleteModal) pilotDeleteModal.addEventListener('click', e => { if (e.target === pilotDeleteModal) closePilotDeleteModal(); });
+
+    function closePilotDeleteModal() {
+      if (pilotDeleteModal) {
+        pilotDeleteModal.classList.add('hidden');
+        pilotDeleteModal.classList.remove('flex');
+      }
+      pilotDeleteTargetId = null;
+    }
+
+    function openPilotDeleteModal(id) {
+      pilotDeleteTargetId = id;
+      if (pilotDeleteModal) {
+        pilotDeleteModal.classList.remove('hidden');
+        pilotDeleteModal.classList.add('flex');
+      }
+    }
+
+    if (pilotDeleteConfirmBtn) {
+      pilotDeleteConfirmBtn.addEventListener('click', async () => {
+        if (!pilotDeleteTargetId) return;
+        pilotDeleteConfirmBtn.disabled = true;
+        pilotDeleteConfirmBtn.textContent = 'Deleting…';
+
+        try {
+          const res = await fetch(`/api/admin/pilots/${pilotDeleteTargetId}`, {
+            method: 'DELETE',
+            headers: authHeaders()
+          });
+          if (res.ok) {
+            showToast(`Pilot lead #${pilotDeleteTargetId} moved to trash.`);
+            const found = (allPilots || []).find(p => p.id === pilotDeleteTargetId);
+            if (found) found.is_deleted = 1;
+            const activeCount = (allPilots || []).filter(p => p.is_deleted !== 1).length;
+            document.getElementById('count-pilots-tab').textContent = activeCount;
+            document.getElementById('stat-leads').textContent = activeCount;
+            closePilotDeleteModal();
+            filterAndRenderPilots();
+          } else {
+            showToast('Failed to delete pilot lead.', 'error');
+          }
+        } catch {
+          showToast('Network error during deletion.', 'error');
+        } finally {
+          pilotDeleteConfirmBtn.disabled = false;
+          pilotDeleteConfirmBtn.textContent = 'Yes, Delete';
+        }
+      });
+    }
+
+    async function restorePilot(id) {
+      try {
+        const res = await fetch(`/api/admin/pilots/${id}/restore`, {
+          method: 'POST',
+          headers: authHeaders()
+        });
+        if (res.ok) {
+          showToast(`Pilot lead #${id} restored.`);
+          await loadDashboard();
+        } else {
+          showToast('Failed to restore pilot lead.', 'error');
+        }
+      } catch {
+        showToast('Network error while restoring pilot lead.', 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Status Change Handler
+    // ─────────────────────────────────────────────────────────────
+    async function changeStatus(id, newStatus) {
+      try {
+        const res = await fetch(`/api/admin/surveys/${id}/status`, {
+          method: 'PATCH',
+          headers: authHeaders(),
+          body: JSON.stringify({ status: newStatus })
+        });
+        if (res.ok) {
+          const item = allSurveys.find(s => s.id === id);
+          if (item) item.status = newStatus;
+          showToast(`Response #${id} status updated to '${newStatus}'`);
+          applyFilters();
+        } else {
+          showToast('Failed to update status', 'error');
+        }
+      } catch {
+        showToast('Network error while updating status', 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Edit Response Modal
+    // ─────────────────────────────────────────────────────────────
+    const editModal    = document.getElementById('edit-modal');
+    const editForm     = document.getElementById('edit-form');
+    const editClose    = document.getElementById('edit-close');
+    const editCancel   = document.getElementById('edit-cancel');
+    const editError    = document.getElementById('edit-error');
+
+    editClose.addEventListener('click', closeEditModal);
+    editCancel.addEventListener('click', closeEditModal);
+    editModal.addEventListener('click', e => { if (e.target === editModal) closeEditModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !editModal.classList.contains('hidden')) closeEditModal(); });
+
+    function closeEditModal() {
+      editModal.classList.add('hidden');
+      editModal.classList.remove('flex');
+    }
+
+    function openEditModal(id) {
+      closeDetailModal();
+      const survey = allSurveys.find(s => s.id === id);
+      if (!survey) return;
+
+      document.getElementById('edit-modal-title').textContent = `Edit Response #${id}`;
+      document.getElementById('edit-id').value = id;
+      document.getElementById('edit-status').value = survey.status || 'Submitted';
+      document.getElementById('edit-respondent-type').value = survey.respondent_type || '';
+      document.getElementById('edit-commute-mode').value = survey.commute_mode || '';
+      document.getElementById('edit-commute-spend').value = survey.commute_spend || '';
+      document.getElementById('edit-concept-usefulness').value = survey.concept_usefulness || '';
+      document.getElementById('edit-pilot-interest').value = survey.pilot_interest || 'Yes';
+      document.getElementById('edit-biggest-problem').value = survey.biggest_problem_open || '';
+      document.getElementById('edit-change-one-thing').value = survey.change_one_thing || '';
+      document.getElementById('edit-admin-notes').value = survey.admin_notes || '';
+
+      editError.classList.add('hidden');
+      editModal.classList.remove('hidden');
+      editModal.classList.add('flex');
+    }
+
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = parseInt(document.getElementById('edit-id').value, 10);
+      const payload = {
+        status: document.getElementById('edit-status').value,
+        respondent_type: document.getElementById('edit-respondent-type').value.trim(),
+        commute_mode: document.getElementById('edit-commute-mode').value.trim(),
+        commute_spend: document.getElementById('edit-commute-spend').value.trim(),
+        concept_usefulness: document.getElementById('edit-concept-usefulness').value.trim(),
+        pilot_interest: document.getElementById('edit-pilot-interest').value,
+        biggest_problem_open: document.getElementById('edit-biggest-problem').value.trim(),
+        change_one_thing: document.getElementById('edit-change-one-thing').value.trim(),
+        admin_notes: document.getElementById('edit-admin-notes').value.trim()
+      };
+
+      const saveBtn = document.getElementById('edit-save-btn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+
+      try {
+        const res = await fetch(`/api/admin/surveys/${id}`, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const idx = allSurveys.findIndex(s => s.id === id);
+          if (idx !== -1) allSurveys[idx] = data.data;
+          closeEditModal();
+          showToast(`Response #${id} updated successfully.`);
+          applyFilters();
+        } else {
+          const errData = await res.json();
+          editError.textContent = errData.detail || 'Failed to update response.';
+          editError.classList.remove('hidden');
+        }
+      } catch {
+        editError.textContent = 'Network error while saving changes.';
+        editError.classList.remove('hidden');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Changes';
+      }
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Delete Confirmation Modal
+    // ─────────────────────────────────────────────────────────────
+    const deleteModal      = document.getElementById('delete-modal');
+    const deleteCancelBtn  = document.getElementById('delete-cancel-btn');
+    const deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+    let deleteTargetId     = null;
+
+    deleteCancelBtn.addEventListener('click', closeDeleteModal);
+    deleteModal.addEventListener('click', e => { if (e.target === deleteModal) closeDeleteModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !deleteModal.classList.contains('hidden')) closeDeleteModal(); });
+
+    function closeDeleteModal() {
+      deleteModal.classList.add('hidden');
+      deleteModal.classList.remove('flex');
+      deleteTargetId = null;
+    }
+
+    function openDeleteModal(id) {
+      deleteTargetId = id;
+      document.getElementById('delete-target-id').textContent = id;
+      deleteModal.classList.remove('hidden');
+      deleteModal.classList.add('flex');
+    }
+
+    deleteConfirmBtn.addEventListener('click', async () => {
+      if (!deleteTargetId) return;
+      deleteConfirmBtn.disabled = true;
+      deleteConfirmBtn.textContent = 'Deleting…';
+
+      try {
+        const res = await fetch(`/api/admin/surveys/${deleteTargetId}`, {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+        if (res.ok) {
+          showToast(`Response #${deleteTargetId} moved to trash.`);
+          closeDeleteModal();
+          await loadDashboard();
+        } else {
+          showToast('Failed to delete response.', 'error');
+        }
+      } catch {
+        showToast('Network error during deletion.', 'error');
+      } finally {
+        deleteConfirmBtn.disabled = false;
+        deleteConfirmBtn.textContent = 'Yes, Delete';
+      }
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Restore Soft-Deleted Item
+    // ─────────────────────────────────────────────────────────────
+    async function restoreSurvey(id) {
+      try {
+        const res = await fetch(`/api/admin/surveys/${id}/restore`, {
+          method: 'POST',
+          headers: authHeaders()
+        });
+        if (res.ok) {
+          showToast(`Response #${id} restored from trash.`);
+          await loadDashboard();
+        } else {
+          showToast('Failed to restore response.', 'error');
+        }
+      } catch {
+        showToast('Network error while restoring response.', 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Survey Detail Modal
+    // ─────────────────────────────────────────────────────────────
+    const detailModal   = document.getElementById('detail-modal');
+    const detailClose   = document.getElementById('detail-close');
+    const detailEditBtn = document.getElementById('detail-edit-btn');
+    const detailBody    = document.getElementById('detail-body');
+    let currentDetailId = null;
+
+    detailClose.addEventListener('click', closeDetailModal);
+    detailModal.addEventListener('click', e => { if (e.target === detailModal) closeDetailModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !detailModal.classList.contains('hidden')) closeDetailModal(); });
+    detailEditBtn.addEventListener('click', () => { if (currentDetailId) openEditModal(currentDetailId); });
+
+    function closeDetailModal() {
+      detailModal.classList.add('hidden');
+      detailModal.classList.remove('flex');
+      currentDetailId = null;
+    }
+
+    async function openDetailModal(id) {
+      currentDetailId = id;
+      detailModal.classList.remove('hidden');
+      detailModal.classList.add('flex');
+      document.getElementById('detail-title').textContent = `Survey #${id}`;
+      document.getElementById('detail-subtitle').textContent = 'Loading…';
+      detailBody.innerHTML = `<div class="text-center py-6 text-slate-400"><svg class="loading-spin w-6 h-6 mx-auto mb-2 text-amber-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading response…</div>`;
+
+      try {
+        const res = await fetch(`/api/admin/surveys/${id}`, { headers: authHeaders() });
+        if (!res.ok) throw new Error('Failed');
+        const s = await res.json();
+        renderDetailModal(s);
+      } catch {
+        detailBody.innerHTML = `<div class="text-rose-400 text-sm">Failed to load survey details.</div>`;
+      }
+    }
+
+    function renderDetailModal(s) {
+      document.getElementById('detail-title').textContent = `Survey Response #${s.id}`;
+      document.getElementById('detail-subtitle').textContent = `Submitted ${(s.timestamp || '').replace('T', ' ').slice(0, 16)} UTC · Status: ${s.status || 'Submitted'}`;
+
+      let problems = [];
+      try { problems = JSON.parse(s.commute_problems || '[]'); } catch {}
+      let comfort  = [];
+      try { comfort  = JSON.parse(s.comfort_factors  || '[]'); } catch {}
+      let barriers = [];
+      try { barriers = JSON.parse(s.adoption_barriers || '[]'); } catch {}
+
+      function section(title, rows) {
+        const content = rows.filter(([,v]) => v).map(([label, val]) =>
+          `<div class="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 py-2 border-b border-slate-800 last:border-0">
+            <span class="text-slate-400 text-xs font-medium min-w-[180px] flex-shrink-0">${escHtml(label)}</span>
+            <span class="text-slate-100 text-xs leading-relaxed whitespace-pre-wrap">${escHtml(String(val))}</span>
+          </div>`).join('');
+        if (!content) return '';
+        return `<div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">${title}</h4>
+          ${content}
+        </div>`;
+      }
+
+      detailBody.innerHTML = [
+        section('Management & Status', [
+          ['Status', s.status || 'Submitted'],
+          ['Admin Notes', s.admin_notes || 'None'],
+          ['Submitted At', s.timestamp],
+          ['Last Updated', s.updated_at || 'Never'],
+        ]),
+        section('Profile', [
+          ['Respondent Type', s.respondent_type],
+          ['Type (Other)', s.respondent_type_other],
+          ['Commute Frequency', s.commute_frequency],
+        ]),
+        section('Commute Details', [
+          ['Duration', s.commute_duration],
+          ['Mode', s.commute_mode],
+          ['Mode (Other)', s.commute_mode_other],
+          ['Daily Spend', s.commute_spend],
+          ['Travels Alone?', s.travel_alone],
+          ['Route Regularity', s.route_regularity],
+        ]),
+        section('Problems & Pain Points', [
+          ['Problems Selected', problems.join(', ')],
+          ['Problems (Other)', s.commute_problems_other],
+          ['Satisfaction Level', s.commute_satisfaction],
+          ['Biggest Problem (Detailed)', s.biggest_problem_open],
+        ]),
+        section('Behaviour & Sharing History', [
+          ['Shared Before?', s.shared_before],
+          ['Discovery Method', s.discovery_method],
+          ['Non-sharing Reason', s.non_sharing_reason],
+        ]),
+        section('Trust & Community', [
+          ['Trusted Partner', s.trusted_sharing_partner],
+          ['Comfort Factors', comfort.join(', ')],
+        ]),
+        section('Concept Validation', [
+          ['Concept Usefulness', s.concept_usefulness],
+          ['Valuable Features', s.valuable_features],
+          ['Adoption Barriers', barriers.join(', ')],
+        ]),
+        section('Intent & Pilot Registration', [
+          ['Likelihood to Share', s.likelihood_to_share],
+          ['Expected Savings', s.expected_savings],
+          ['Pilot Interest', s.pilot_interest],
+          ['Change One Thing', s.change_one_thing],
+        ]),
+      ].join('');
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Tabs
+    // ─────────────────────────────────────────────────────────────
+    const tabSurv  = document.getElementById('tab-surveys-btn');
+    const tabPilot = document.getElementById('tab-pilots-btn');
+    const survView  = document.getElementById('surveys-view');
+    const pilotView = document.getElementById('pilots-view');
+    const filterBar = document.getElementById('filter-bar');
+
+    tabSurv.addEventListener('click', () => {
+      tabSurv.className  = 'tab-active px-4 py-2 rounded-lg text-sm font-semibold text-amber-400 bg-amber-400/10 transition';
+      tabPilot.className = 'tab-inactive px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition';
+      survView.classList.remove('hidden');
+      pilotView.classList.add('hidden');
+      document.getElementById('search-input').placeholder = 'Search surveys…';
+      filterBar.classList.remove('hidden');
+    });
+
+    tabPilot.addEventListener('click', () => {
+      tabPilot.className = 'tab-active px-4 py-2 rounded-lg text-sm font-semibold text-amber-400 bg-amber-400/10 transition';
+      tabSurv.className  = 'tab-inactive px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition';
+      pilotView.classList.remove('hidden');
+      survView.classList.add('hidden');
+      document.getElementById('search-input').placeholder = 'Search pilot leads…';
+      filterBar.classList.add('hidden');
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Filter Event Listeners
+    // ─────────────────────────────────────────────────────────────
+    const filterSearchInput = document.getElementById('search-input');
+    const filterSelectType  = document.getElementById('filter-type');
+    const filterSelectPilot = document.getElementById('filter-pilot');
+    const filterSelectStatus= document.getElementById('filter-status');
+    const filterCheckDeleted= document.getElementById('filter-deleted');
+    const filterBtnClear    = document.getElementById('filter-clear');
+
+    function triggerFilterUpdate() {
+      const isSurveysTab = !document.getElementById('surveys-view').classList.contains('hidden');
+      if (isSurveysTab) {
+        applyFilters();
+      } else {
+        filterAndRenderPilots();
+      }
+    }
+
+    if (filterSearchInput) filterSearchInput.addEventListener('input', triggerFilterUpdate);
+    if (filterSelectType)   filterSelectType.addEventListener('change', triggerFilterUpdate);
+    if (filterSelectPilot)  filterSelectPilot.addEventListener('change', triggerFilterUpdate);
+    if (filterSelectStatus) filterSelectStatus.addEventListener('change', triggerFilterUpdate);
+    if (filterCheckDeleted) filterCheckDeleted.addEventListener('change', triggerFilterUpdate);
+
+    if (filterBtnClear) {
+      filterBtnClear.addEventListener('click', () => {
+        if (filterSearchInput) filterSearchInput.value = '';
+        if (filterSelectType)   filterSelectType.value = '';
+        if (filterSelectPilot)  filterSelectPilot.value = '';
+        if (filterSelectStatus) filterSelectStatus.value = '';
+        if (filterCheckDeleted) filterCheckDeleted.checked = false;
+        triggerFilterUpdate();
+      });
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Exports
+    // ─────────────────────────────────────────────────────────────
+    document.getElementById('btn-export-surveys').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/admin/export/surveys.csv', { headers: authHeaders() });
+        if (!res.ok) { showToast('Export failed. Please try again.', 'error'); return; }
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = 'rido_survey_responses.csv'; a.click();
+        URL.revokeObjectURL(url);
+        showToast('Exported survey responses to CSV');
+      } catch { showToast('Network error during export.', 'error'); }
+    });
+
+    document.getElementById('btn-export-pilots').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/admin/export/pilots.csv', { headers: authHeaders() });
+        if (!res.ok) { showToast('Export failed. Please try again.', 'error'); return; }
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = 'rido_pilot_leads.csv'; a.click();
+        URL.revokeObjectURL(url);
+        showToast('Exported pilot leads to CSV');
+      } catch { showToast('Network error during export.', 'error'); }
+    });
+
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      document.getElementById('last-updated').textContent = 'Refreshing…';
+      loadDashboard();
+      showToast('Dashboard data refreshed');
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Utility
+    // ─────────────────────────────────────────────────────────────
+    function escHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Initialise — check token on load
+    // ─────────────────────────────────────────────────────────────
+    (function init() {
+      const token = getToken();
+      if (token) {
+        fetch('/api/admin/stats', { headers: { 'Authorization': `Bearer ${token}` } })
+          .then(r => {
+            if (r.status === 401) { clearToken(); showLoginScreen(); }
+            else showDashboard();
+          })
+          .catch(() => showLoginScreen());
+      } else {
+        showLoginScreen();
+      }
+    })();
+  </script>
+</body>
+</html>

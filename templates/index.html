@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Rido — Everyday Commute Research & Problem Validation</title>
+  <meta name="description" content="Early-stage research on recurring student and professional commutes. Help us understand everyday travel challenges before we build anything." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            rido: {
+              yellow: '#FFC700',
+              yellowHover: '#E5B200',
+              dark: '#0B0C10',
+              card: '#12131A',
+              border: '#232634'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="bg-[#0B0C10] text-slate-100 antialiased selection:bg-amber-400 selection:text-black">
+
+  <!-- ==========================================
+       TOP RESEARCH NOTICE BANNER
+       ========================================== -->
+  <div class="bg-amber-400/10 border-b border-amber-400/20 py-2 px-4 text-center text-xs text-amber-300 flex items-center justify-center gap-2">
+    <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+    <span><strong>Active Research Study:</strong> Rido is a working project name while we conduct user research. Not a launched service.</span>
+  </div>
+
+  <!-- ==========================================
+       3. HEADER
+       ========================================== -->
+  <header class="sticky top-0 z-40 bg-[#0B0C10]/90 backdrop-blur-md border-b border-slate-800/80 transition-all">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between">
+      
+      <!-- Logo + Badge -->
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center text-black font-black text-xl font-display shadow-lg shadow-amber-400/20 group-hover:scale-105 transition-transform">
+          R
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-black tracking-tight text-white font-display">rido</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-800 text-amber-400 border border-slate-700">Research</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+        <a href="#research" class="hover:text-amber-400 transition">Research</a>
+        <a href="#how-it-could-work" class="hover:text-amber-400 transition">How It Could Work</a>
+        <a href="#survey" class="hover:text-amber-400 transition">Survey</a>
+        <a href="#pilot" class="hover:text-amber-400 transition">Early Pilot</a>
+      </nav>
+
+      <!-- Desktop CTA -->
+      <div class="hidden md:flex items-center gap-3">
+        <!-- Admin button — visible labeled button -->
+        <button type="button" id="admin-login-trigger"
+          aria-label="Admin Login"
+          class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 hover:bg-slate-800/70 text-xs font-semibold transition focus:outline-none">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          Admin
+        </button>
+        <a href="#survey" class="btn-yellow px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+          Take the Survey
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <div class="md:hidden flex items-center gap-2">
+        <a href="#survey" class="btn-yellow px-3.5 py-1.5 rounded-lg text-xs font-bold">
+          Survey
+        </a>
+        <button id="mobile-menu-btn" type="button" aria-label="Toggle Navigation Menu" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none">
+          <svg id="menu-icon-bars" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <svg id="menu-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-6 py-6 space-y-4">
+      <nav class="flex flex-col space-y-3 text-base font-medium text-slate-200">
+        <a href="#research" class="mobile-nav-link hover:text-amber-400 transition py-1">Research</a>
+        <a href="#how-it-could-work" class="mobile-nav-link hover:text-amber-400 transition py-1">How It Could Work</a>
+        <a href="#survey" class="mobile-nav-link hover:text-amber-400 transition py-1">Survey</a>
+        <a href="#pilot" class="mobile-nav-link hover:text-amber-400 transition py-1">Early Pilot</a>
+      </nav>
+      <div class="pt-4 border-t border-slate-800 flex flex-col gap-2.5">
+        <a href="#survey" class="mobile-nav-link btn-yellow text-center py-3 rounded-xl text-sm font-bold">
+          Take the Survey →
+        </a>
+        <button type="button" onclick="window.RidoPilotModal && window.RidoPilotModal.open(); document.getElementById('mobile-menu').classList.add('hidden');" class="btn-dark py-3 rounded-xl text-sm font-semibold text-center">
+          Join Early Pilot
+        </button>
+        <!-- Admin login — mobile, clearly visible -->
+        <button type="button" id="admin-login-trigger-mobile"
+          class="flex items-center justify-center gap-2 border border-slate-700 rounded-xl py-2.5 text-slate-300 hover:text-white hover:border-slate-500 text-sm font-medium transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          Admin Login
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       ADMIN LOGIN MODAL
+       ========================================== -->
+  <div id="admin-modal-backdrop"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+    role="dialog" aria-modal="true" aria-label="Admin Login">
+
+    <div id="admin-modal-box"
+      class="relative w-full max-w-sm bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl p-8 flex flex-col gap-5">
+
+      <!-- Close button -->
+      <button type="button" id="admin-modal-close"
+        class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition" aria-label="Close">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <!-- Icon -->
+      <div class="w-11 h-11 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+
+      <!-- Title -->
+      <div>
+        <h2 class="text-lg font-bold text-white mb-1">Research Team Login</h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Enter your admin password to access the research dashboard.
+        </p>
+      </div>
+
+      <!-- Form -->
+      <form id="admin-modal-form" action="javascript:void(0);" class="flex flex-col gap-4" autocomplete="off">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="admin-modal-key-input">
+            Admin Password
+          </label>
+          <input
+            type="password"
+            id="admin-modal-key-input"
+            name="admin_password"
+            placeholder="Enter your admin password…"
+            autocomplete="current-password"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder-slate-600
+                   focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400/30 transition"
+          />
+        </div>
+
+        <!-- Error message -->
+        <div id="admin-modal-error"
+          class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl px-3 py-2.5 flex items-center gap-2">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          <span id="admin-modal-error-text">Incorrect password. Please try again.</span>
+        </div>
+
+        <button type="submit" id="admin-modal-submit"
+          class="btn-yellow w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-400/10">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+          </svg>
+          Unlock Dashboard →
+        </button>
+      </form>
+
+      <p class="text-[10px] text-slate-600 text-center leading-relaxed">
+        This area is restricted to the Rido research team.<br>User responses are protected.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       4. HERO SECTION
+       ========================================== -->
+  <section class="relative pt-12 md:pt-24 pb-16 md:pb-28 overflow-hidden">
+    <!-- Subtle gradient glow in background -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+    
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+      
+      <!-- Small Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full badge-research text-xs font-bold uppercase tracking-wider mb-6">
+        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+        EARLY-STAGE RESEARCH
+      </div>
+
+      <!-- Main Heading -->
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.08] mb-6 font-display">
+        Tell us about your everyday commute.
+      </h1>
+
+      <!-- Supporting text -->
+      <p class="text-lg sm:text-xl md:text-2xl text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto mb-4">
+        We’re researching how students, professionals and communities travel every day — what works, what doesn’t, and what could be better.
+      </p>
+
+      <!-- Secondary text -->
+      <p class="text-sm sm:text-base text-slate-400 max-w-xl mx-auto mb-10 leading-normal">
+        Your answers will help us understand the real problems people face before we build anything.
+      </p>
+
+      <!-- Action CTAs -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+        <a href="#survey" class="w-full sm:w-auto btn-yellow px-8 py-4 rounded-2xl text-base font-bold shadow-xl shadow-amber-400/20 flex items-center justify-center gap-2">
+          Take the 3-Minute Survey →
+        </a>
+        <button type="button" onclick="window.RidoPilotModal && window.RidoPilotModal.open()" class="w-full sm:w-auto btn-dark px-7 py-4 rounded-2xl text-base font-semibold flex items-center justify-center gap-2">
+          Join the Early Pilot
+        </button>
+      </div>
+
+      <!-- Small Note -->
+      <p class="text-xs text-slate-500 font-medium tracking-wide">
+        Rido is a working project name while we conduct early research.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       5. RESEARCH INTRODUCTION
+       ========================================== -->
+  <section id="research" class="py-16 md:py-24 bg-[#12131A] border-y border-slate-800">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      
+      <!-- Section Label & Heading -->
+      <div class="max-w-2xl mb-12">
+        <div class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+          THE RESEARCH
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight font-display mb-4">
+          Your commute is different. We want to understand why.
+        </h2>
+        <div class="space-y-3 text-slate-300 text-base sm:text-lg leading-relaxed">
+          <p>
+            People travel similar routes every day, but their experiences can be very different. Some spend too much, some lose time, some struggle with reliability, and others simply prefer travelling alone.
+          </p>
+          <p class="text-slate-400">
+            Instead of assuming what the problem is, we want to hear from people who actually commute.
+          </p>
+        </div>
+      </div>
+
+      <!-- 3 Clean Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        
+        <!-- Card 01 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-7 flex flex-col justify-between hover:border-slate-700 transition">
+          <div>
+            <div class="text-amber-400 font-mono text-2xl font-black mb-4">01</div>
+            <h3 class="text-lg font-bold text-white mb-2 uppercase tracking-wide">YOUR ROUTE</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Where do you usually travel?
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-500">
+            Mapping route patterns & distance
+          </div>
+        </div>
+
+        <!-- Card 02 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-7 flex flex-col justify-between hover:border-slate-700 transition">
+          <div>
+            <div class="text-amber-400 font-mono text-2xl font-black mb-4">02</div>
+            <h3 class="text-lg font-bold text-white mb-2 uppercase tracking-wide">YOUR EXPERIENCE</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              What works and what doesn't?
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-500">
+            Pinpointing actual frustrations & satisfaction
+          </div>
+        </div>
+
+        <!-- Card 03 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-7 flex flex-col justify-between hover:border-slate-700 transition">
+          <div>
+            <div class="text-amber-400 font-mono text-2xl font-black mb-4">03</div>
+            <h3 class="text-lg font-bold text-white mb-2 uppercase tracking-wide">YOUR CHOICES</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              How do you currently solve your commute?
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-500">
+            Observing real transit and sharing habits
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Section CTA -->
+      <div class="text-center sm:text-left">
+        <a href="#survey" class="inline-flex items-center gap-2 text-amber-400 font-bold hover:text-amber-300 text-sm tracking-wide transition group">
+          Share Your Experience <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       6. WHAT WE ARE EXPLORING
+       ========================================== -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+        <div class="max-w-2xl">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight font-display mb-3">
+            What could make everyday commuting easier?
+          </h2>
+          <p class="text-slate-300 text-base sm:text-lg">
+            We’re exploring a few areas, but we want your experience to tell us what actually matters.
+          </p>
+        </div>
+        <div class="inline-block px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+          Research hypotheses — not conclusions.
+        </div>
+      </div>
+
+      <!-- 4 Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Cost -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 hover:border-amber-400/40 transition">
+          <div class="w-10 h-10 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center font-mono font-bold text-sm mb-4">
+            01
+          </div>
+          <h3 class="text-sm font-extrabold text-white uppercase tracking-wider mb-2">COST</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Could sharing a regular commute reduce daily travel expenses?
+          </p>
+        </div>
+
+        <!-- Time -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 hover:border-amber-400/40 transition">
+          <div class="w-10 h-10 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center font-mono font-bold text-sm mb-4">
+            02
+          </div>
+          <h3 class="text-sm font-extrabold text-white uppercase tracking-wider mb-2">TIME</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Could better matching make regular travel more predictable?
+          </p>
+        </div>
+
+        <!-- Connection -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 hover:border-amber-400/40 transition">
+          <div class="w-10 h-10 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center font-mono font-bold text-sm mb-4">
+            03
+          </div>
+          <h3 class="text-sm font-extrabold text-white uppercase tracking-wider mb-2">CONNECTION</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Could people travelling similar routes help each other commute?
+          </p>
+        </div>
+
+        <!-- Trust -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 hover:border-amber-400/40 transition">
+          <div class="w-10 h-10 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center font-mono font-bold text-sm mb-4">
+            04
+          </div>
+          <h3 class="text-sm font-extrabold text-white uppercase tracking-wider mb-2">TRUST</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            What would make sharing a ride feel comfortable?
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       7. COMMUNITY CONCEPT
+       ========================================== -->
+  <section class="py-16 md:py-24 bg-gradient-to-b from-[#12131A] to-[#0B0C10] border-t border-slate-800">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight font-display mb-4">
+          What if your commute started with people you already have something in common with?
+        </h2>
+        <p class="text-slate-300 text-base sm:text-lg">
+          Rido is exploring a community-first approach to everyday ride sharing.
+        </p>
+      </div>
+
+      <!-- 3 Large Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        
+        <!-- College / University -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative overflow-hidden group hover:border-slate-700 transition">
+          <div class="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white uppercase tracking-tight mb-2">COLLEGE / UNIVERSITY</h3>
+          <p class="text-slate-300 text-sm leading-relaxed mb-6">
+            Students travelling between campus and home.
+          </p>
+          <div class="text-xs text-slate-500 font-mono">
+            Exploratory Cohort 01
+          </div>
+        </div>
+
+        <!-- Workplace -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative overflow-hidden group hover:border-slate-700 transition">
+          <div class="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white uppercase tracking-tight mb-2">WORKPLACE</h3>
+          <p class="text-slate-300 text-sm leading-relaxed mb-6">
+            Employees travelling regularly to and from work.
+          </p>
+          <div class="text-xs text-slate-500 font-mono">
+            Exploratory Cohort 02
+          </div>
+        </div>
+
+        <!-- Residential Community -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative overflow-hidden group hover:border-slate-700 transition">
+          <div class="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white uppercase tracking-tight mb-2">RESIDENTIAL COMMUNITY</h3>
+          <p class="text-slate-300 text-sm leading-relaxed mb-6">
+            People living in the same society or neighborhood.
+          </p>
+          <div class="text-xs text-slate-500 font-mono">
+            Exploratory Cohort 03
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Below Explanation with exploratory tone -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 text-center max-w-2xl mx-auto">
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+          The idea is simple: find people from a community you belong to who regularly travel a similar route and schedule.
+        </p>
+        <span class="inline-block mt-3 text-xs text-amber-400/90 font-medium italic">
+          We’re exploring whether verified community ties might make recurring carpooling or ride-sharing feel safer and more dependable.
+        </span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       8. HOW RIDO COULD WORK
+       ========================================== -->
+  <section id="how-it-could-work" class="py-16 md:py-24 bg-[#0B0C10]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <div class="inline-block px-3 py-1 rounded-full badge-research text-xs font-bold uppercase tracking-wider mb-3">
+          Conceptual Flow — Subject to Research
+        </div>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight font-display mb-3">
+          A simpler recurring commute
+        </h2>
+        <p class="text-slate-400 text-base sm:text-lg">
+          Here’s one concept we’re testing.
+        </p>
+      </div>
+
+      <!-- 4-step visual flow -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 relative">
+        
+        <!-- Step 1 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 relative flex flex-col justify-between hover:border-slate-700 transition">
+          <div>
+            <span class="w-8 h-8 rounded-lg bg-amber-400 text-black font-mono font-bold text-xs flex items-center justify-center mb-5">
+              01
+            </span>
+            <h3 class="text-base font-bold text-white mb-2 uppercase tracking-wide">
+              JOIN YOUR COMMUNITY
+            </h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              Verify the community you belong to.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-500 font-mono">
+            College / Office / Society
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 relative flex flex-col justify-between hover:border-slate-700 transition">
+          <div>
+            <span class="w-8 h-8 rounded-lg bg-amber-400 text-black font-mono font-bold text-xs flex items-center justify-center mb-5">
+              02
+            </span>
+            <h3 class="text-base font-bold text-white mb-2 uppercase tracking-wide">
+              ADD YOUR COMMUTE
+            </h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              Set your route, usual time and frequency.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-500 font-mono">
+            Origin, Destination, Schedule
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 relative flex flex-col justify-between hover:border-slate-700 transition">
+          <div>
+            <span class="w-8 h-8 rounded-lg bg-amber-400 text-black font-mono font-bold text-xs flex items-center justify-center mb-5">
+              03
+            </span>
+            <h3 class="text-base font-bold text-white mb-2 uppercase tracking-wide">
+              FIND A MATCH
+            </h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              Discover people travelling a similar route.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-500 font-mono">
+            Shared corridors & timing
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 relative flex flex-col justify-between hover:border-slate-700 transition">
+          <div>
+            <span class="w-8 h-8 rounded-lg bg-amber-400 text-black font-mono font-bold text-xs flex items-center justify-center mb-5">
+              04
+            </span>
+            <h3 class="text-base font-bold text-white mb-2 uppercase tracking-wide">
+              BUILD YOUR COMMUTE CIRCLE
+            </h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              Create a recurring group instead of finding a new ride every day.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-500 font-mono">
+            Stable everyday rhythm
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==========================================
+           9. RECURRING COMMUTE EXAMPLE
+           ========================================== -->
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-slate-900 border-2 border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+          
+          <!-- Example Disclaimer Badge -->
+          <div class="flex items-center justify-between gap-2 mb-6">
+            <span class="text-[11px] font-mono uppercase tracking-widest text-amber-400 font-bold px-3 py-1 rounded-md bg-amber-400/10 border border-amber-400/20">
+              CONCEPT EXAMPLE
+            </span>
+            <span class="text-xs text-emerald-400 flex items-center gap-1.5 font-medium">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Verified Community
+            </span>
+          </div>
+
+          <!-- Route Info -->
+          <div class="mb-6">
+            <div class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">
+              Greater Noida → Galgotias University
+            </div>
+            <div class="flex items-center gap-3 text-slate-400 text-sm">
+              <span class="flex items-center gap-1 text-slate-300 font-medium">
+                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Mon–Fri · 8:15 AM
+              </span>
+              <span>•</span>
+              <span class="text-amber-300 font-medium">2 seats available</span>
+            </div>
+          </div>
+
+          <!-- Members & Roles Display -->
+          <div class="space-y-3 mb-6 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              4 Commute Members
+            </div>
+
+            <!-- Member 1: Driver -->
+            <div class="flex items-center justify-between text-xs sm:text-sm py-1.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-xs">
+                  AK
+                </div>
+                <span class="font-medium text-white">Ananya K.</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400 text-black">
+                  Driver
+                </span>
+              </div>
+              <span class="text-emerald-400 text-xs flex items-center gap-1">
+                ✓ Verified Student ID
+              </span>
+            </div>
+
+            <!-- Member 2: Passenger -->
+            <div class="flex items-center justify-between text-xs sm:text-sm py-1.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-xs">
+                  RS
+                </div>
+                <span class="font-medium text-white">Rohan S.</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                  Passenger
+                </span>
+              </div>
+              <span class="text-emerald-400 text-xs flex items-center gap-1">
+                ✓ Verified
+              </span>
+            </div>
+
+            <!-- Member 3: Passenger -->
+            <div class="flex items-center justify-between text-xs sm:text-sm py-1.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-xs">
+                  VM
+                </div>
+                <span class="font-medium text-white">Varun M.</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                  Passenger
+                </span>
+              </div>
+              <span class="text-emerald-400 text-xs flex items-center gap-1">
+                ✓ Verified
+              </span>
+            </div>
+          </div>
+
+          <!-- Conceptual Button Text -->
+          <div class="text-center py-2 border border-dashed border-amber-400/40 rounded-xl bg-amber-400/5 mb-4">
+            <span class="text-sm font-bold text-amber-300">
+              Build a recurring commute group
+            </span>
+          </div>
+
+          <!-- Required Disclaimer (Prominent & Clear) -->
+          <p class="text-center text-xs text-slate-500 font-medium">
+            This is a fictional example created to explain the concept. Do not imply that this commute group currently exists.
+          </p>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       10. TRUST & SAFETY RESEARCH
+       ========================================== -->
+  <section class="py-16 md:py-24 bg-[#12131A] border-y border-slate-800">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      
+      <div class="max-w-3xl mb-12">
+        <div class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+          TRUST & SAFETY INQUIRY
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight font-display mb-4">
+          What would make shared commuting comfortable?
+        </h2>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-2">
+          Trust may be one of the biggest factors in shared commuting. We want to understand what people actually need.
+        </p>
+        <p class="text-xs text-slate-400 italic">
+          We are researching the factors below as exploratory possibilities — not active service promises.
+        </p>
+      </div>
+
+      <!-- 10 Exploratory Factors Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mb-10">
+        
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">1</span>
+          <span class="text-sm font-medium text-slate-200">Community verification</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">2</span>
+          <span class="text-sm font-medium text-slate-200">Identity verification</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">3</span>
+          <span class="text-sm font-medium text-slate-200">Ratings & reviews</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">4</span>
+          <span class="text-sm font-medium text-slate-200">Previous ride history</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">5</span>
+          <span class="text-sm font-medium text-slate-200">Mutual connections</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">6</span>
+          <span class="text-sm font-medium text-slate-200">Live location sharing</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">7</span>
+          <span class="text-sm font-medium text-slate-200">Emergency / SOS</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">8</span>
+          <span class="text-sm font-medium text-slate-200">Clear profile information</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">9</span>
+          <span class="text-sm font-medium text-slate-200">Knowing the person beforehand</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3 sm:col-span-2 lg:col-span-3">
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">10</span>
+          <span class="text-sm font-medium text-slate-200">Repeat commute connections (familiar everyday faces)</span>
+        </div>
+
+      </div>
+
+      <div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <div class="text-sm font-bold text-white mb-1">
+            Which of these actually matter to you? Tell us in the survey.
+          </div>
+          <div class="text-xs text-slate-400">
+            Help us understand what would make you feel secure.
+          </div>
+        </div>
+        <a href="#survey" class="btn-yellow px-6 py-2.5 rounded-xl text-sm font-bold flex-shrink-0">
+          Share Your Opinion →
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       11. MAIN SURVEY SECTION (MOST IMPORTANT)
+       ========================================== -->
+  <section id="survey" class="py-16 md:py-28 relative bg-[#0B0C10]">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+      
+      <!-- Survey Header Card -->
+      <div id="survey-welcome-card" class="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-12 text-center shadow-2xl relative overflow-hidden">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-research text-xs font-semibold uppercase tracking-wider mb-4">
+          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+          User Research & Feedback
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight font-display mb-3">
+          Help us understand your commute.
+        </h2>
+
+        <p class="text-slate-400 text-base sm:text-lg mb-8 max-w-lg mx-auto">
+          18–22 questions · About 3–5 minutes
+        </p>
+
+        <div class="space-y-4 max-w-md mx-auto mb-8 text-left text-xs sm:text-sm text-slate-300">
+          <div class="flex items-center gap-3">
+            <span class="w-5 h-5 rounded-full bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+            <span>Focuses on your <strong>actual commute behavior</strong></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="w-5 h-5 rounded-full bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+            <span>One question per screen with keyboard shortcuts (1–9, Enter)</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="w-5 h-5 rounded-full bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+            <span>Responses saved automatically so you won’t lose progress</span>
+          </div>
+        </div>
+
+        <button type="button" id="start-survey-trigger-btn" class="btn-yellow px-10 py-4 rounded-2xl text-base font-bold shadow-xl shadow-amber-400/20 inline-flex items-center gap-2">
+          Start Survey →
+        </button>
+      </div>
+
+      <!-- Mount Container for Interactive Survey Engine -->
+      <div id="survey-app-container" class="hidden"></div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       17. EARLY PILOT SECTION
+       ========================================== -->
+  <section id="pilot" class="py-16 md:py-24 bg-[#12131A] border-t border-slate-800">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+      <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+        
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-research text-xs font-semibold uppercase tracking-wider mb-4">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            EARLY ADOPTERS COHORT
+          </div>
+
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-display mb-4">
+            Want to help us test the idea?
+          </h2>
+
+          <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8">
+            We’re looking for a small group of students, professionals and community members to participate in early research and pilot testing.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+            <button type="button" onclick="window.RidoPilotModal && window.RidoPilotModal.open()" class="btn-yellow px-8 py-3.5 rounded-2xl text-sm font-bold shadow-lg shadow-amber-400/20">
+              Join the Early Pilot →
+            </button>
+            <a href="#survey" class="text-slate-400 hover:text-white text-sm font-medium transition py-2">
+              Or take the survey first
+            </a>
+          </div>
+
+          <p class="text-xs text-slate-500 font-medium italic">
+            Pilot availability will depend on location and research requirements.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       23. FINAL CTA SECTION
+       ========================================== -->
+  <section class="py-20 md:py-28 bg-[#0B0C10] border-t border-slate-800 text-center">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight font-display mb-4">
+        Your commute could help shape what we build next.
+      </h2>
+
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-10 max-w-2xl mx-auto">
+        We're not trying to build another ride-sharing app based on assumptions. We're trying to understand the real everyday commute first.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#survey" class="w-full sm:w-auto btn-yellow px-8 py-4 rounded-2xl text-base font-bold shadow-xl shadow-amber-400/20">
+          Take the Survey →
+        </a>
+        <button type="button" onclick="window.RidoPilotModal && window.RidoPilotModal.open()" class="w-full sm:w-auto btn-dark px-7 py-4 rounded-2xl text-base font-semibold">
+          Join Early Pilot
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       18 & 19. PRIVACY & FOOTER
+       ========================================== -->
+  <footer class="bg-black border-t border-slate-900 py-12 text-slate-400 text-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      
+      <!-- Privacy Statement (Section 18) -->
+      <div class="p-6 rounded-2xl bg-slate-950 border border-slate-900 mb-10 text-slate-400 leading-relaxed">
+        <p class="mb-2">
+          <strong class="text-slate-300">Privacy & Research Consent:</strong>
+          Your responses are collected for research and product validation purposes. Contact information is only collected if you choose to join the early pilot.
+        </p>
+        <p class="text-slate-500">
+          By submitting, you agree to let us use your responses for research and product development.
+        </p>
+      </div>
+
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-900">
+        
+        <!-- Brand + Tagline -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-6 h-6 rounded-md bg-amber-400 flex items-center justify-center text-black font-black text-xs font-display">R</span>
+            <span class="text-lg font-black text-white font-display">rido</span>
+          </div>
+          <p class="text-slate-400 text-xs max-w-sm">
+            Exploring a better way to make everyday commuting more connected.
+          </p>
+        </div>
+
+        <!-- Links -->
+        <div class="flex flex-wrap items-center gap-6 text-xs font-medium text-slate-300">
+          <a href="#research" class="hover:text-amber-400 transition">Research</a>
+          <a href="#how-it-could-work" class="hover:text-amber-400 transition">How It Could Work</a>
+          <a href="#survey" class="hover:text-amber-400 transition">Survey</a>
+          <a href="#pilot" class="hover:text-amber-400 transition">Early Pilot</a>
+        </div>
+
+      </div>
+
+      <!-- Bottom Disclaimer (Section 19) -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-600 text-[11px]">
+        <p>
+          Rido is an early-stage research project. Product concepts shown on this website are experimental and may change based on research.
+        </p>
+        <p>
+          &copy; 2026 Rido Research Initiative. All rights reserved.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/pilot-modal.js?v=4"></script>
+  <script src="/static/js/survey-engine.js?v=4"></script>
+  <script>
+    // Mobile navigation toggle
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuBars = document.getElementById('menu-icon-bars');
+    const menuClose = document.getElementById('menu-icon-close');
+
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        const isHidden = mobileMenu.classList.contains('hidden');
+        if (isHidden) {
+          mobileMenu.classList.remove('hidden');
+          menuBars.classList.add('hidden');
+          menuClose.classList.remove('hidden');
+        } else {
+          mobileMenu.classList.add('hidden');
+          menuBars.classList.remove('hidden');
+          menuClose.classList.add('hidden');
+        }
+      });
+
+      // Close mobile menu on anchor click
+      document.querySelectorAll('.mobile-nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+          menuBars.classList.remove('hidden');
+          menuClose.classList.add('hidden');
+        });
+      });
+    }
+
+    // Survey App launcher
+    const startSurveyBtn = document.getElementById('start-survey-trigger-btn');
+    const surveyWelcomeCard = document.getElementById('survey-welcome-card');
+    const surveyAppContainer = document.getElementById('survey-app-container');
+
+    function launchSurvey() {
+      if (surveyWelcomeCard && surveyAppContainer) {
+        surveyWelcomeCard.classList.add('hidden');
+        surveyAppContainer.classList.remove('hidden');
+        new window.RidoSurveyEngine('survey-app-container');
+        surveyAppContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    if (startSurveyBtn) {
+      startSurveyBtn.addEventListener('click', launchSurvey);
+    }
+
+    // If URL has #survey, or if there is an existing draft, auto-open survey
+    window.addEventListener('DOMContentLoaded', () => {
+      const hasDraft = localStorage.getItem('rido_survey_draft_v1');
+      if (window.location.hash === '#survey' && hasDraft) {
+        launchSurvey();
+      }
+    });
+
+    // Intercept clicks on links pointing to #survey
+    document.querySelectorAll('a[href="#survey"]').forEach(link => {
+      link.addEventListener('click', () => {
+        if (surveyWelcomeCard && surveyAppContainer && surveyAppContainer.classList.contains('hidden')) {
+          launchSurvey();
+        }
+      });
+    });
+
+    // ============================================
+    // ADMIN LOGIN MODAL CONTROLLER (JWT-based)
+    // ============================================
+    (function () {
+      const backdrop    = document.getElementById('admin-modal-backdrop');
+      const closeBtn    = document.getElementById('admin-modal-close');
+      const form        = document.getElementById('admin-modal-form');
+      const pwInput     = document.getElementById('admin-modal-key-input');
+      const submitBtn   = document.getElementById('admin-modal-submit');
+      const errorBox    = document.getElementById('admin-modal-error');
+      const errorText   = document.getElementById('admin-modal-error-text');
+      const triggerDesk = document.getElementById('admin-login-trigger');
+      const triggerMob  = document.getElementById('admin-login-trigger-mobile');
+
+      function openModal() {
+        backdrop.classList.remove('hidden');
+        backdrop.classList.add('flex');
+        setTimeout(() => pwInput && pwInput.focus(), 50);
+      }
+
+      function closeModal() {
+        backdrop.classList.add('hidden');
+        backdrop.classList.remove('flex');
+        if (errorBox) errorBox.classList.add('hidden');
+        if (pwInput) pwInput.value = '';
+      }
+
+      function showError(msg) {
+        if (errorText) errorText.textContent = msg;
+        if (errorBox) errorBox.classList.remove('hidden');
+        if (pwInput) { pwInput.classList.add('border-rose-500'); pwInput.focus(); }
+      }
+
+      function clearError() {
+        if (errorBox) errorBox.classList.add('hidden');
+        if (pwInput) pwInput.classList.remove('border-rose-500');
+      }
+
+      function resetBtn() {
+        if (!submitBtn) return;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg> Unlock Dashboard →`;
+      }
+
+      if (triggerDesk) triggerDesk.addEventListener('click', openModal);
+      if (triggerMob)  triggerMob.addEventListener('click', () => {
+        const mm   = document.getElementById('mobile-menu');
+        const bars = document.getElementById('menu-icon-bars');
+        const x    = document.getElementById('menu-icon-close');
+        if (mm)   mm.classList.add('hidden');
+        if (bars) bars.classList.remove('hidden');
+        if (x)    x.classList.add('hidden');
+        openModal();
+      });
+
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (backdrop) backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && backdrop && !backdrop.classList.contains('hidden')) closeModal();
+      });
+
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          clearError();
+          const password = (pwInput ? pwInput.value.trim() : '');
+          if (!password) { showError('Please enter your admin password.'); return; }
+
+          if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Verifying…'; }
+
+          let loginSuccess = false;
+          try {
+            const res = await fetch('/api/admin/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ password })
+            });
+
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.access_token) {
+                sessionStorage.setItem('rido_admin_token', data.access_token);
+                localStorage.setItem('rido_admin_token', data.access_token);
+                loginSuccess = true;
+                window.location.href = '/admin';
+              } else {
+                showError('Invalid server response. Please try again.');
+              }
+            } else if (res.status === 401) {
+              showError('Incorrect password. Please try again.');
+            } else if (res.status === 429) {
+              showError('Too many attempts. Please wait a minute and try again.');
+            } else {
+              showError('Unable to connect to the server. Please try again.');
+            }
+          } catch (err) {
+            showError('Network error. Please check your connection.');
+          } finally {
+            if (!loginSuccess) {
+              resetBtn();
+            }
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

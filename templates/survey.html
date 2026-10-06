@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Rido Commute Research Survey</title>
+  <meta name="description" content="1-question-per-screen research survey on everyday commute behaviors and recurring travel needs." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            rido: {
+              yellow: '#FFC700',
+              yellowHover: '#E5B200',
+              dark: '#0B0C10',
+              card: '#12131A'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="bg-[#0B0C10] text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-black">
+
+  <!-- Simple Survey Header -->
+  <header class="border-b border-slate-800/80 bg-[#0B0C10]/80 backdrop-blur-md py-4 px-4 sm:px-8">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center text-black font-black text-lg font-display">
+          R
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-bold tracking-tight text-white font-display">rido</span>
+          <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-800 text-amber-400 border border-slate-700">Study</span>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-4">
+        <a href="/" class="text-xs text-slate-400 hover:text-white transition flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Back to Overview
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Survey Mount Point -->
+  <main class="flex-1 flex items-center py-6 sm:py-12">
+    <div id="survey-standalone-mount" class="w-full"></div>
+  </main>
+
+  <!-- Minimal Research Disclaimer Footer -->
+  <footer class="py-6 border-t border-slate-900 text-center text-xs text-slate-500 px-4">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span>Rido is an early-stage research project. Not a launched service.</span>
+      <span>Responses collected solely for research & validation.</span>
+    </div>
+  </footer>
+
+  <script src="/static/js/pilot-modal.js?v=4"></script>
+  <script src="/static/js/survey-engine.js?v=4"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      new window.RidoSurveyEngine("survey-standalone-mount");
+    });
+  </script>
+</body>
+</html>
